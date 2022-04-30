@@ -1,11 +1,19 @@
 import Image from 'next/image'
-import { FiArrowUpRight } from 'react-icons/fi'
 import { AiOutlineDown } from 'react-icons/ai'
 import { RiSettings3Fill } from 'react-icons/ri'
 import ethLogo from "../assets/eth.png"
+import { useContext } from 'react'
+import { TransactionContext } from '../context/TransactionContext'
+import Modal from "react-modal"
+import { useRouter } from 'next/router'
+import TransactionLoader from './TransactionLoader'
+
+Modal.setAppElement('#__next')
+
+//useContext
 
 const style = {
-	wrapper: `w-screen flex items-center justify-center mt-14`,
+	wrapper: `w-screen flex items-center justify-center mt-5`,
 	content: `bg-[#191B1F] w-[40rem] rounded-2xl p-4`,
 	formHeader: `px-2 flex items-center justify-between font-semibold text-xl`,
 	transferPropContainer: `bg-[#20242A] my-3 rounded-2xl p-6 text-3xl  border border-[#20242A] hover:border-[#41444F]  flex justify-between`,
@@ -18,7 +26,34 @@ const style = {
 	confirmButton: `bg-[#2172E5] my-2 rounded-2xl py-6 px-8 text-xl font-semibold flex items-center justify-center cursor-pointer border border-[#2172E5] hover:border-[#234169]`,
 }
 
+
+const customStyles = {
+	content: {
+		top: '50%',
+		left: '50%',
+		right: 'auto',
+		bottom: 'auto',
+		transform: 'translate(-50%, -50%)',
+		backgroundColor: '#0a0b0d',
+		padding: 0,
+		border: 'none',
+	},
+	overlay: {
+		backgroundColor: 'rgba(10, 11, 13, 0.75)',
+	},
+}
+
 const Main = () => {
+	const { sendTransaction, handleChange, formData } = useContext(TransactionContext)
+	const router = useRouter()
+	const handleSubmit = async (e) => {
+		const { addressTo, amount } = formData
+		e.preventDefault()
+
+		if (!addressTo || !amount) return
+
+		sendTransaction()
+	}
 	return (
 		<div className={style.wrapper}>
 			<div className={style.content}>
@@ -59,6 +94,9 @@ const Main = () => {
 					Confirm
 				</div>
 			</div>
+			<Modal isOpen={!!router.query.loading} style={customStyles}>
+				<TransactionLoader />
+			</Modal>
 		</div>
 	)
 }

@@ -4,7 +4,7 @@ export const UserSchema = {
 	type: 'document',
 	fields: [
 		{
-			name: 'walletAddress',
+			name: 'address',
 			title: 'Wallet Address',
 			type: 'string',
 		},
